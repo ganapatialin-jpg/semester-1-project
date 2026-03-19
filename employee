@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Entity structures based on project scope [cite: 19]
+typedef struct {
+    int id;
+    char name[50];
+    char designation[50];
+    float salary;
+} Employee;
+
+// Function Prototypes [cite: 24]
+void addEmployee();
+void displayEmployees();
+void searchEmployee();
+void deleteEmployee();
+void mainMenu();
+
+int main() {
+    mainMenu();
+    return 0;
+}
+
+void mainMenu() {
+    int choice;
+    while (1) {
+        printf("\n--- EMPLOYEE RECORD MANAGEMENT SYSTEM ---");
+        printf("\n1. Employee Management");
+        printf("\n2. Department Management (Stub)");
+        printf("\n3. Project Management (Stub)");
+        printf("\n4. Exit");
+        printf("\nSelect Category: ");
+        scanf("%d", &choice);
+
+        // Outer Switch handles main categories 
+        switch (choice) {
+            case 1: {
+                int subChoice;
+                while (1) {
+                    printf("\n-- Employee Sub-Menu --");
+                    printf("\n1. Add Employee\n2. Display All\n3. Search\n4. Delete\n5. Back");
+                    printf("\nEnter Choice: ");
+                    scanf("%d", &subChoice);
+
+                    // Inner switch handles entity CRUD 
+                    if (subChoice == 1) addEmployee();
+                    else if (subChoice == 2) displayEmployees();
+                    else if (subChoice == 3) searchEmployee();
+                    else if (subChoice == 4) deleteEmployee();
+                    else if (subChoice == 5) break; 
+                    else printf("Invalid Choice!\n");
+                }
+                break;
+            }
+            case 4:
+                exit(0);
+            default:
+                printf("Option under development.\n");
+        }
+    }
+}
+
+// CREATE Operation [cite: 14]
+void addEmployee() {
+    FILE *fp = fopen("employee.txt", "a"); // Append mode [cite: 12]
+    Employee e;
+
+    printf("Enter Employee ID: ");
+    scanf("%d", &e.id);
+    printf("Enter Name: ");
+    scanf(" %[^\n]", e.name);
+    printf("Enter Designation: ");
+    scanf(" %[^\n]", e.designation);
+    printf("Enter Salary: ");
+    scanf("%f", &e.salary);
+
+    fprintf(fp, "%d %s %s %.2f\n", e.id, e.name, e.designation, e.salary);
+    fclose(fp);
+    printf("Record saved successfully.\n");
+}
+
+// READ Operation [cite: 14]
+void displayEmployees() {
+    FILE *fp = fopen("employee.txt", "r");
+    Employee e;
+    
+    if (fp == NULL) {
+        printf("No records found.\n");
+        return;
+    }
+
+    printf("\nID\tName\t\tDesignation\tSalary\n");
+    printf("----------------------------------------------\n");
+    // fscanf return-value checking 
+    while (fscanf(fp, "%d %s %s %f", &e.id, e.name, e.designation, &e.salary) == 4) {
+        printf("%d\t%s\t\t%s\t%.2f\n", e.id, e.name, e.designation, e.salary);
+    }
+    fclose(fp);
+}
+
+// SEARCH Operation [cite: 20]
+void searchEmployee() {
+    FILE *fp = fopen("employee.txt", "r");
+    Employee e;
+    int targetID, found = 0; // Usage of flags for feedback [cite: 35]
+
+    printf("Enter ID to search: ");
+    scanf("%d", &targetID);
+
+    while (fscanf(fp, "%d %s %s %f", &e.id, e.name, e.designation, &e.salary) == 4) {
+        if (e.id == targetID) {
+            printf("Record Found: %s - %s\n", e.name, e.designation);
+            found = 1;
+            break;
+        }
+    }
+    if (!found) printf("Employee with ID %d not found.\n", targetID);
+    fclose(fp);
+}
+
+// DELETE Operation using Temp-File Swap [cite: 31, 32]
+void deleteEmployee() {
+    FILE *fp = fopen("employee.txt", "r");
+    FILE *ft = fopen("temp.txt", "w");
+    Employee e;
+    int targetID, found = 0;
+
+    printf("Enter ID to delete: ");
+    scanf("%d", &targetID);
+
+    while (fscanf(fp, "%d %s %s %f", &e.id, e.name, e.designation, &e.salary) == 4) {
+        if (e.id == targetID) {
+            found = 1;
+        } else {
+            fprintf(ft, "%d %s %s %.2f\n", e.id, e.name, e.designation, e.salary);
+        }
+    }
+
+    fclose(fp);
+    fclose(ft);
+
+    remove("employee.txt");
+    rename("temp.txt", "employee.txt"); // Swapping temp to original 
+
+    if (found) printf("Record deleted.\n");
+    else printf("Record not found.\n");
+}
