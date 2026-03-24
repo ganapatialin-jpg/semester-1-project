@@ -38,7 +38,6 @@ typedef struct {
     char dueDate[20];
 } Assignment;
 
-// New Prototypes
 void assignmentMenu();
 void addAssignment();
 void displayAssignments();
@@ -79,13 +78,15 @@ void mainMenu() {
                 }
                 break;
             }
-    case 2:
-    departmentMenu(); // Call the new department sub-menu
+    case 2: {
+    departmentMenu(); 
     break;
+}
 
-case 3:
+    case 3: {
     assignmentMenu();
     break;
+}
             case 4:
                 exit(0);
             default:
