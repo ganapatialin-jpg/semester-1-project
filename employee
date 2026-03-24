@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-//structures based on project scope 
+//structures for employee record
 typedef struct {
     int id;
     char name[50];
@@ -10,20 +10,20 @@ typedef struct {
     float salary;
 } Employee;
 
-// for department management
+//structure for department management
 typedef struct {
     int deptID;
     char deptName[50];
     char manager[50];
 } Department;
 
-// Updated prototypes for department management
+//for department management
 void departmentMenu();
 void addDepartment();
 void displayDepartments();
 void searchDepartment();
 
-// Function Prototypes for employee management
+//for employee management
 void addEmployee();
 void displayEmployees();
 void searchEmployee();
@@ -37,7 +37,6 @@ typedef struct {
     char taskName[50];
     char dueDate[20];
 } Assignment;
-
 void assignmentMenu();
 void addAssignment();
 void displayAssignments();
@@ -58,7 +57,7 @@ void mainMenu() {
         printf("\nSelect Category: ");
         scanf("%d", &choice);
 
-        // Outer Switch handles main categories 
+        //switch case for employee management 
         switch (choice) {
             case 1: {
                 int subChoice;
@@ -133,7 +132,7 @@ void displayEmployees() {
     fclose(fp);
 }
 
-// SEARCH Operation [cite: 20]
+// SEARCH Operation 
 void searchEmployee() {
     FILE *fp = fopen("employee.txt", "r");
     Employee e;
