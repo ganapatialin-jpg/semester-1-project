@@ -9,6 +9,19 @@ typedef struct {
     char designation[50];
     float salary;
 } Employee;
+// for department management
+typedef struct {
+    int deptID;
+    char deptName[50];
+    char manager[50];
+} Department;
+
+// Updated prototypes
+void departmentMenu();
+void addDepartment();
+void displayDepartments();
+void searchDepartment();
+
 
 // Function Prototypes [cite: 24]
 void addEmployee();
@@ -53,6 +66,9 @@ void mainMenu() {
                 }
                 break;
             }
+    case 2:
+    departmentMenu(); // Call the new department sub-menu
+    break;
             case 4:
                 exit(0);
             default:
@@ -116,6 +132,82 @@ void searchEmployee() {
         }
     }
     if (!found) printf("Employee with ID %d not found.\n", targetID);
+    fclose(fp);
+}
+// Department Sub-Menu
+void departmentMenu() {
+    int subChoice;
+    while (1) {
+        printf("\n-- Department Sub-Menu --");
+        printf("\n1. Add Department\n2. Display All\n3. Search\n4. Back");
+        printf("\nEnter Choice: ");
+        scanf("%d", &subChoice);
+
+        if (subChoice == 1) addDepartment();
+        else if (subChoice == 2) displayDepartments();
+        else if (subChoice == 3) searchDepartment();
+        else if (subChoice == 4) break;
+        else printf("Invalid Choice!\n");
+    }
+}
+
+// CREATE Operation for Department
+void addDepartment() {
+    FILE *fp = fopen("department.txt", "a");
+    Department d;
+
+    printf("Enter Department ID: ");
+    scanf("%d", &d.deptID);
+    printf("Enter Department Name: ");
+    scanf(" %[^\n]", d.deptName);
+    printf("Enter Manager Name: ");
+    scanf(" %[^\n]", d.manager);
+
+    fprintf(fp, "%d %s %s\n", d.deptID, d.deptName, d.manager);
+    fclose(fp);
+    printf("Department record saved successfully.\n");
+}
+
+// READ Operation for Department
+void displayDepartments() {
+    FILE *fp = fopen("department.txt", "r");
+    Department d;
+    
+    if (fp == NULL) {
+        printf("No department records found.\n");
+        return;
+    }
+
+    printf("\nID\tDept Name\t\tManager\n");
+    printf("----------------------------------------------\n");
+    while (fscanf(fp, "%d %s %s", &d.deptID, d.deptName, d.manager) == 3) {
+        printf("%d\t%s\t\t%s\n", d.deptID, d.deptName, d.manager);
+    }
+    fclose(fp);
+}
+
+// SEARCH Operation for Department
+void searchDepartment() {
+    FILE *fp = fopen("department.txt", "r");
+    Department d;
+    int targetID, found = 0;
+
+    if (fp == NULL) {
+        printf("No records found.\n");
+        return;
+    }
+
+    printf("Enter Dept ID to search: ");
+    scanf("%d", &targetID);
+
+    while (fscanf(fp, "%d %s %s", &d.deptID, d.deptName, d.manager) == 3) {
+        if (d.deptID == targetID) {
+            printf("Record Found: %s managed by %s\n", d.deptName, d.manager);
+            found = 1;
+            break;
+        }
+    }
+    if (!found) printf("Department ID %d not found.\n", targetID);
     fclose(fp);
 }
 
