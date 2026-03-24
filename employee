@@ -82,6 +82,10 @@ void mainMenu() {
     case 2:
     departmentMenu(); // Call the new department sub-menu
     break;
+
+case 3:
+    assignmentMenu();
+    break;
             case 4:
                 exit(0);
             default:
