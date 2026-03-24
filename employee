@@ -2,13 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Entity structures based on project scope [cite: 19]
+//structures based on project scope 
 typedef struct {
     int id;
     char name[50];
     char designation[50];
     float salary;
 } Employee;
+
 // for department management
 typedef struct {
     int deptID;
@@ -16,19 +17,31 @@ typedef struct {
     char manager[50];
 } Department;
 
-// Updated prototypes
+// Updated prototypes for department management
 void departmentMenu();
 void addDepartment();
 void displayDepartments();
 void searchDepartment();
 
-
-// Function Prototypes [cite: 24]
+// Function Prototypes for employee management
 void addEmployee();
 void displayEmployees();
 void searchEmployee();
 void deleteEmployee();
 void mainMenu();
+
+// structure for assignment management
+typedef struct {
+    int assignID;
+    int empID;
+    char taskName[50];
+    char dueDate[20];
+} Assignment;
+
+// New Prototypes
+void assignmentMenu();
+void addAssignment();
+void displayAssignments();
 
 int main() {
     mainMenu();
@@ -39,9 +52,9 @@ void mainMenu() {
     int choice;
     while (1) {
         printf("\n--- EMPLOYEE RECORD MANAGEMENT SYSTEM ---");
-        printf("\n1. Employee Management");
-        printf("\n2. Department Management (Stub)");
-        printf("\n3. Project Management (Stub)");
+        printf("\n1. Employee Management ");
+        printf("\n2. Department Management ");
+        printf("\n3. Assignment Management ");
         printf("\n4. Exit");
         printf("\nSelect Category: ");
         scanf("%d", &choice);
@@ -56,7 +69,7 @@ void mainMenu() {
                     printf("\nEnter Choice: ");
                     scanf("%d", &subChoice);
 
-                    // Inner switch handles entity CRUD 
+                    // Inner switch handles entity CRUD for employee 
                     if (subChoice == 1) addEmployee();
                     else if (subChoice == 2) displayEmployees();
                     else if (subChoice == 3) searchEmployee();
@@ -72,12 +85,12 @@ void mainMenu() {
             case 4:
                 exit(0);
             default:
-                printf("Option under development.\n");
+                printf(" -------INVALID CHOICE-------.\n");
         }
     }
 }
 
-// CREATE Operation [cite: 14]
+// CREATE Operation 
 void addEmployee() {
     FILE *fp = fopen("employee.txt", "a"); // Append mode [cite: 12]
     Employee e;
@@ -96,7 +109,7 @@ void addEmployee() {
     printf("Record saved successfully.\n");
 }
 
-// READ Operation [cite: 14]
+// READ Operation 
 void displayEmployees() {
     FILE *fp = fopen("employee.txt", "r");
     Employee e;
@@ -211,7 +224,60 @@ void searchDepartment() {
     fclose(fp);
 }
 
-// DELETE Operation using Temp-File Swap [cite: 31, 32]
+void assignmentMenu() {
+    int subChoice;
+    while (1) {
+        printf("\n-- Assignment Sub-Menu --");
+        printf("\n1. Create New Assignment");
+        printf("\n2. View All Assignments");
+        printf("\n3. Back");
+        printf("\nEnter Choice: ");
+        scanf("%d", &subChoice);
+
+        if (subChoice == 1) addAssignment();
+        else if (subChoice == 2) displayAssignments();
+        else if (subChoice == 3) break;
+        else printf("Invalid Choice!\n");
+    }
+}
+
+// for assignment management
+void addAssignment() {
+    FILE *fp = fopen("assignments.txt", "a");
+    Assignment a;
+
+    printf("Enter Assignment ID: ");
+    scanf("%d", &a.assignID);
+    printf("Enter Employee ID to assign: ");
+    scanf("%d", &a.empID);
+    printf("Enter Task Name: ");
+    scanf(" %[^\n]", a.taskName);
+    printf("Enter Due Date (DD/MM/YYYY): ");
+    scanf(" %[^\n]", a.dueDate);
+
+    fprintf(fp, "%d %d %s %s\n", a.assignID, a.empID, a.taskName, a.dueDate);
+    fclose(fp);
+    printf("Assignment created successfully.\n");
+}
+
+void displayAssignments() {
+    FILE *fp = fopen("assignments.txt", "r");
+    Assignment a;
+    
+    if (fp == NULL) {
+        printf("No assignments found.\n");
+        return;
+    }
+
+    printf("\nAsgn_ID\tEmp_ID\tTask\t\tDue Date\n");
+    printf("----------------------------------------------\n");
+    while (fscanf(fp, "%d %d %s %s", &a.assignID, &a.empID, a.taskName, a.dueDate) == 4) {
+        printf("%d\t%d\t%s\t\t%s\n", a.assignID, a.empID, a.taskName, a.dueDate);
+    }
+    fclose(fp);
+}
+
+// DELETE Operation using Temp-File Swap 
 void deleteEmployee() {
     FILE *fp = fopen("employee.txt", "r");
     FILE *ft = fopen("temp.txt", "w");
