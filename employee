@@ -254,12 +254,12 @@ void addAssignment() {
     scanf("%d", &a.assignID);
     printf("Enter Employee ID to assign: ");
     scanf("%d", &a.empID);
+    while (getchar() != '\n');
     printf("Enter Task Name: ");
-    scanf(" %[^\n]", a.taskName);
+    scanf("%[^\n]", a.taskName);
     printf("Enter Due Date (DD/MM/YYYY): ");
-    scanf(" %[^\n]", a.dueDate);
-
-    fprintf(fp, "%d %d %s %s\n", a.assignID, a.empID, a.taskName, a.dueDate);
+    scanf(" %[^\n]", &a.dueDate);
+    fprintf(fp, "%d|%d|%s|%s\n", a.assignID, a.empID, a.taskName, a.dueDate);
     fclose(fp);
     printf("Assignment created successfully.\n");
 }
@@ -275,8 +275,9 @@ void displayAssignments() {
 
     printf("\nAsgn_ID\tEmp_ID\tTask\t\tDue Date\n");
     printf("----------------------------------------------\n");
-    while (fscanf(fp, "%d %d %s %s", &a.assignID, &a.empID, a.taskName, a.dueDate) == 4) {
-        printf("%d\t%d\t%s\t\t%s\n", a.assignID, a.empID, a.taskName, a.dueDate);
+
+    while (fscanf(fp, "%d|%d|%[^|]|%[^\n]\n", &a.assignID, &a.empID, a.taskName, a.dueDate) == 4) {
+        printf("%d\t%d\t%-15s\t%s\n", a.assignID, a.empID, a.taskName, a.dueDate);
     }
     fclose(fp);
 }
